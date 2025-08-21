@@ -25,7 +25,7 @@ func (a APIServer) handleCreatePost(w http.ResponseWriter, r *http.Request) erro
 
 	if err := json.NewDecoder(r.Body).Decode(&postCreate); err != nil {
 		log.Println(err)
-		return WriteJSON(w, http.StatusBadRequest, apiError{Error: "invalid request body"})
+		return WriteJSON(w, http.StatusBadRequest, apiError{Error: "invalid request body", Details: err.Error()})
 	}
 
 	post, err := a.storage.CreatePost(postCreate)

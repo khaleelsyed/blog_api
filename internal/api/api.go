@@ -9,7 +9,8 @@ import (
 )
 
 type apiError struct {
-	Error string `json:"error"`
+	Error   string `json:"error"`
+	Details string `json:"details,omitempty"`
 }
 type apiHandlerFunc func(w http.ResponseWriter, r *http.Request) error
 
