@@ -1,6 +1,13 @@
 package api
 
-import "net/http"
+import (
+	"encoding/json"
+	"errors"
+	"log"
+	"net/http"
+
+	"github.com/khaleelsyed/blog_api/internal/storage"
+)
 
 func (a APIServer) handlePostsEndpoint(w http.ResponseWriter, r *http.Request) error {
 	switch r.Method {
@@ -14,9 +21,21 @@ func (a APIServer) handlePostsEndpoint(w http.ResponseWriter, r *http.Request) e
 }
 
 func (a APIServer) handleCreatePost(w http.ResponseWriter, r *http.Request) error {
-	return WriteJSON(w, http.StatusNotImplemented, "create post not implemented")
+	var postCreate storage.PostContent
+
+	if err := json.NewDecoder(r.Body).Decode(&postCreate); err != nil {
+		log.Println(err)
+		return WriteJSON(w, http.StatusBadRequest, apiError{Error: "invalid request body"})
+	}
+
+	post, err := a.storage.CreatePost(postCreate)
+	if err != nil {
+		return errors.New("there was an issue loading to the database")
+	}
+
+	return WriteJSON(w, http.StatusCreated, post)
 }
 
 func (a APIServer) handleListPosts(w http.ResponseWriter, r *http.Request) error {
-	return WriteJSON(w, http.StatusNotImplemented, "list posts not implemented")
+	return WriteJSON(w, http.StatusNotImplemented, apiError{Error: "list posts not implemented"})
 }

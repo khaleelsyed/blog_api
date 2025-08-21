@@ -2,17 +2,19 @@ package api
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
+type apiError struct {
+	Error string `json:"error"`
+}
 type apiHandlerFunc func(w http.ResponseWriter, r *http.Request) error
 
 var methodNotAllowed = func(w http.ResponseWriter) error {
-	return WriteJSON(w, http.StatusMethodNotAllowed, errors.New("method not allowed"))
+	return WriteJSON(w, http.StatusMethodNotAllowed, apiError{Error: "method not allowed"})
 }
 
 type APIServer struct {
@@ -39,6 +41,7 @@ func NewAPIServer(listenAddr string, storage Storage) APIServer {
 func WriteJSON(w http.ResponseWriter, status int, v any) error {
 	w.Header().Set("Content-Type", "application/json")
 
+	// If the case of an error and the status does not represent an error
 	if _, errFound := v.(error); errFound && status < 400 {
 		status = http.StatusInternalServerError
 	}
@@ -49,7 +52,7 @@ func WriteJSON(w http.ResponseWriter, status int, v any) error {
 	if err != nil {
 		log.Println(err)
 	}
-	return nil
+	return err
 }
 
 func makeHTTPHandler(f apiHandlerFunc) http.HandlerFunc {
