@@ -37,5 +37,12 @@ func (a APIServer) handleCreatePost(w http.ResponseWriter, r *http.Request) erro
 }
 
 func (a APIServer) handleListPosts(w http.ResponseWriter, r *http.Request) error {
-	return WriteJSON(w, http.StatusNotImplemented, apiError{Error: "list posts not implemented"})
+	queryString := r.URL.Query().Get("term")
+	posts, err := a.storage.ListPosts(queryString)
+	if err != nil {
+		log.Println(err)
+		return WriteJSON(w, http.StatusBadRequest, apiError{Error: "invalid query parameters", Details: err.Error()})
+	}
+
+	return WriteJSON(w, http.StatusOK, posts)
 }
