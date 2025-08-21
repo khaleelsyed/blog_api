@@ -18,7 +18,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	server := api.NewAPIServer(os.Getenv("LISTEN_ADDRESS"), storage)
+	listenAddr := os.Getenv("LISTEN_ADDRESS")
+	log.Println("API listening on ", listenAddr)
+	server := api.NewAPIServer(listenAddr, storage)
 
 	server.Run()
 }
