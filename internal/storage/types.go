@@ -1,6 +1,9 @@
 package storage
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type PostContent struct {
 	Title    string   `json:"title"`
@@ -17,4 +20,12 @@ type Post struct {
 	Tags      []string  `json:"tags"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type NotFoundErr struct {
+	postID int
+}
+
+func (e NotFoundErr) Error() string {
+	return fmt.Sprintf("Post %d was not found", e.postID)
 }

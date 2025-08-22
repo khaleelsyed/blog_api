@@ -1,7 +1,6 @@
 package storage
 
 import (
-	"fmt"
 	"strings"
 	"time"
 )
@@ -44,12 +43,15 @@ func (s MockStorage) UpdatePost(id int, postContent PostContent) (Post, error) {
 
 func (s MockStorage) DeletePost(id int) error {
 	if id != 1 {
-		return fmt.Errorf("post with id %d not found", id)
+		return NotFoundErr{postID: id}
 	}
 	return nil
 }
 
 func (s MockStorage) GetPost(id int) (Post, error) {
+	if id != 1 {
+		return Post{}, NotFoundErr{postID: id}
+	}
 	return mockPost, nil
 }
 
